@@ -1,0 +1,1 @@
+export const backendBaseURL = import.meta.env.VITE_BD_Base_URL || "http://localhost:8081"

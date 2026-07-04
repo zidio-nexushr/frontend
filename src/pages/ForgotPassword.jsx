@@ -3,50 +3,41 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { backendBaseURL } from "../config";
 
-const Login = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    email: "",
-    password: ""
-  });
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
 
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    });
-  };
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit =  async (e) => {
+
+  //generate forgot password url
+  const forgotPassword_URL = `${backendBaseURL}/api/auth/forgot_password`
+
+  const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     setLoading(true)
 
-    //login url
-    const loginURL = `${backendBaseURL}/api/auth/login`
-
     try {
-      const response = await fetch(loginURL, {
+
+      const response = await fetch(forgotPassword_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password
-        })
-      })
+        body: {
+          email: email
+        }
+      });
 
       if (response.ok) {
-        alert("Login Successful 🎉");
-
-        navigate("/");
-      }else{
-        alert("Invalid Credentials");
+        alert("Password reset link sent to email 📩");
+      } else {
+        alert("Invalid Email")
       }
     } catch (error) {
       alert("Server error, please try again later.");
-    }finally{
+    } finally {
       setLoading(false)
     }
   };
@@ -54,50 +45,31 @@ const Login = () => {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2>Login</h2>
+        <h2>Forgot Password</h2>
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <input
             type="email"
-            name="email"
-            placeholder="Enter Email"
-            value={form.email}
-            onChange={handleChange}
-            style={styles.input}
-            required
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter Password"
-            value={form.password}
-            onChange={handleChange}
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             style={styles.input}
             required
           />
 
           {
-                        loading ? 'Resetting Password...' : <p></p>
-                            
-                    }
+            loading ? <p>Loading...</p> : <p></p>
+          }
 
           <button type="submit" style={styles.button}>
-            Login
+            Send Reset Link
           </button>
         </form>
 
         <p style={styles.linkText}>
-          Forgot Password?{" "}
-          <span onClick={() => navigate("/forgot-password")} style={styles.link}>
-            Click here
-          </span>
-        </p>
-
-        <p style={styles.linkText}>
-          Don't have an account?{" "}
-          <span onClick={() => navigate("/register")} style={styles.link}>
-            Register
+          Back to{" "}
+          <span onClick={() => navigate("/login")} style={styles.link}>
+            Login
           </span>
         </p>
       </div>
@@ -133,7 +105,7 @@ const styles = {
   },
   button: {
     padding: "10px",
-    backgroundColor: "blue",
+    backgroundColor: "red",
     color: "white",
     border: "none",
     borderRadius: "5px",
@@ -149,4 +121,4 @@ const styles = {
   }
 };
 
-export default Login;
+export default ForgotPassword;

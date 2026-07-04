@@ -1,102 +1,126 @@
+import { useState } from "react";
+import "../App.css";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { backendBaseURL } from "../config";
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+
+
+
 
 const ResetPassword = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    //get token param
+    const [searchParams] = useSearchParams()
 
-  const [email, setEmail] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    //check loading
+    const [loading, setLoading] = useState(false)
 
-    console.log("Reset Password Email:", email);
-    alert("Password reset link sent to email 📩");
+    //intiate the form entry data
+    const [formData, setFormData] = useState({
+        password: "",
+        confirmPassword: ""
+    })
 
-    navigate("/login");
-  };
+    //handle on change event
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    }
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2>Reset Password</h2>
+    //handle submission function
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={styles.input}
-            required
-          />
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
 
-          <button type="submit" style={styles.button}>
-            Send Reset Link
-          </button>
-        </form>
+        setLoading(true);
 
-        <p
-          onClick={() => navigate("/login")}
-          style={{ color: "blue", cursor: 
-            "pointer", marginTop: "10px" }}
-        >
-            Back to Login
-          </p>
+        //reset password url
+        const resetPasswordUrl = `${backendBaseURL}/api/auth/reset_password`
+        
+        //token
+        const token = searchParams.get('token')
 
-        <p style={styles.linkText}>
-          Back to{" "}
-          <span onClick={() => navigate("/login")} style={styles.link}>
-            Login
-          </span>
-        </p>
-      </div>
-    </div>
-  );
-};
 
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#f2f2f2"
-  },
-  card: {
-    padding: "30px",
-    background: "white",
-    borderRadius: "10px",
-    boxShadow: "0px 0px 10px gray",
-    width: "300px",
-    textAlign: "center"
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column"
-  },
-  input: {
-    margin: "10px 0",
-    padding: "10px",
-    borderRadius: "5px",
-    border: "1px solid #ccc"
-  },
-  button: {
-    padding: "10px",
-    backgroundColor: "red",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer"
-  },
-  linkText: {
-    marginTop: "10px",
-    fontSize: "14px"
-  },
-  link: {
-    color: "blue",
-    cursor: "pointer"
-  }
-};
+        try {
+            const response = await fetch(resetPasswordUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    token: token,
+                    password: formData.password
+                })
+            })
+
+            if (response.ok) {
+                alert("Password Reset Successfully");
+
+                navigate("/login");
+            } else {
+                alert("Invalid or Expired token");
+            }
+
+        } catch (err) {
+            alert("Server error, please try again later.");
+        } finally {
+            setLoading(false)
+        }
+    };
+
+
+    return (
+        <div className="container">
+            <div className="card">
+
+                <h2>Reset Password</h2>
+
+                <form
+                    action=""
+                    className="form"
+                    onSubmit={handleSubmit}
+                >
+
+                    <input
+                        type="password"
+                        placeholder="Enter Password"
+                        className="input"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        className="input"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    {
+                        loading ? 'Resetting Password...' : formData.confirmPassword &&
+                            formData.password !== formData.confirmPassword && (
+                                <p style={{ color: "red" }}>Passwords do not match.</p>
+                            )
+                    }
+
+                    <button className="button" >Reset Password</button>
+
+                </form>
+
+            </div>
+        </div>
+    )
+}
+
 
 export default ResetPassword;
