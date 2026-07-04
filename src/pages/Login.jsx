@@ -26,6 +26,7 @@ const Login = () => {
 
     //login url
     const loginURL = `${backendBaseURL}/api/auth/login`
+    console.log(`Trying ${process.env.REACT_APP_BD_BASE_URL}`);
 
     try {
       const response = await fetch(loginURL, {

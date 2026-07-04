@@ -1,1 +1,1 @@
-export const backendBaseURL = import.meta.env.VITE_BD_Base_URL || "http://localhost:8081"
+export const backendBaseURL = process.env.REACT_APP_BD_BASE_URL || "http://localhost:8081"

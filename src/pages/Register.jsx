@@ -35,6 +35,8 @@ const Register = () => {
     //register URL
     const registerURL = `${backendBaseURL}/api/auth/register`
 
+    console.log(`Trying ${process.env.REACT_APP_BD_BASE_URL}`);
+
 
     try {
 
@@ -52,10 +54,13 @@ const Register = () => {
       
       alert("Registration Successful (Demo)");
 
-      navigator("/login")
+      navigator("/login");
 
     } catch (error) {
+      alert("Server error, please try again later.");
 
+    }finally{
+      setLoading(false);
     }
 
   };
