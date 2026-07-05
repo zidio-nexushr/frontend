@@ -20,14 +20,16 @@ const ForgotPassword = () => {
 
     setLoading(true)
 
+    console.log(`Mail: ${email}`)
+
     try {
 
       const response = await fetch(forgotPassword_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: {
-          email: email
-        }
+        body: JSON.stringify({
+          email: email,
+        }),
       });
 
       if (response.ok) {
