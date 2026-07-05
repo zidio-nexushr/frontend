@@ -79,7 +79,7 @@ const Login = () => {
           />
 
           {
-                        loading ? 'Resetting Password...' : <p></p>
+                        loading ? 'Loading...' : <p></p>
                             
                     }
 

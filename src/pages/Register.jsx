@@ -40,7 +40,7 @@ const Register = () => {
 
     try {
 
-      await fetch(registerURL, {
+      const response = await fetch(registerURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -51,15 +51,20 @@ const Register = () => {
           role: formData.role
         })
       })
-      
-      alert("Registration Successful (Demo)");
 
-      navigator("/login");
+      if (response.ok) {
+        alert("Registration Successful (Demo)");
+
+        navigator("/login");
+
+      }else{
+        alert("Something went wrong please try again)");
+      }
 
     } catch (error) {
       alert("Server error, please try again later.");
 
-    }finally{
+    } finally {
       setLoading(false);
     }
 
@@ -115,7 +120,7 @@ const Register = () => {
 
 
         {
-          loading ? <p>Loading</p>: <p></p>
+          loading ? <p>Loading</p> : <p></p>
         }
 
 
